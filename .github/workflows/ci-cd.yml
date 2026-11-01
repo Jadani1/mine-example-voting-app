@@ -113,7 +113,7 @@ jobs:
 
       # --- Trivy vulnerability scan ---
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: "${{ matrix.name }}:${{ env.SHA_TAG }}"
           format: table
