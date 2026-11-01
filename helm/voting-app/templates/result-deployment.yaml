@@ -1,0 +1,35 @@
+{{- if .Values.result.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result
+  labels:
+    app: result
+    {{- include "voting-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.result.replicaCount }}
+  selector:
+    matchLabels:
+      app: result
+  template:
+    metadata:
+      labels:
+        app: result
+    spec:
+      containers:
+        - name: result
+          image: {{ include "voting-app.image" (dict "registry" .Values.imageRegistry "repository" .Values.result.image.repository "tag" .Values.result.image.tag) }}
+          imagePullPolicy: {{ .Values.result.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.result.service.targetPort }}
+              name: result
+          env:
+            - name: POSTGRES_HOST
+              value: db
+            - name: POSTGRES_USER
+              value: {{ .Values.db.env.POSTGRES_USER | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.db.env.POSTGRES_PASSWORD | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.db.env.POSTGRES_DB | quote }}
+{{- end }}

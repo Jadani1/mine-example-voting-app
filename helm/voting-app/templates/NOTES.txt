@@ -1,0 +1,14 @@
+Example Voting App has been deployed as release "{{ .Release.Name }}".
+
+Services (NodePort defaults match k8s-specifications/):
+  Vote UI:    http://<node-ip>:{{ .Values.vote.service.nodePort }}
+  Results UI: http://<node-ip>:{{ .Values.result.service.nodePort }}
+
+Useful commands:
+  helm status {{ .Release.Name }}
+  helm history {{ .Release.Name }}
+  kubectl get pods,svc -l app.kubernetes.io/instance={{ .Release.Name }}
+
+Rollback demo (see helm/voting-app/README.md):
+  helm upgrade {{ .Release.Name }} {{ .Chart.Name }} -f values.yaml -f values-bad.yaml
+  helm rollback {{ .Release.Name }} 1

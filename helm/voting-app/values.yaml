@@ -1,0 +1,75 @@
+# Default (stable) values — "good" release baseline
+# Override with -f values-bad.yaml or --set for demos / environments.
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Global image registry prefix (empty = Docker Hub short names / official images)
+# Example after CI push: imageRegistry: "yourdockerhubuser"
+imageRegistry: ""
+
+vote:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: dockersamples/examplevotingapp_vote
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 8080
+    targetPort: 80
+    nodePort: 31000
+  env:
+    OPTION_A: Cats
+    OPTION_B: Dogs
+
+result:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: dockersamples/examplevotingapp_result
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 8081
+    targetPort: 80
+    nodePort: 31001
+
+worker:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: dockersamples/examplevotingapp_worker
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+redis:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: redis
+    tag: "alpine"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 6379
+
+db:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: "15-alpine"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5432
+  env:
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_DB: postgres
+  # Demo-only: emptyDir (data lost on pod restart). Use PVC for real envs.
+  persistence:
+    enabled: false

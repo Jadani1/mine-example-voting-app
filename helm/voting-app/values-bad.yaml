@@ -1,0 +1,17 @@
+# Intentionally broken overlay — use ONLY to practice helm rollback.
+# Simulates a bad release (non-existent image tags → ImagePullBackOff).
+#
+#   helm upgrade voting-app ./helm/voting-app -f helm/voting-app/values.yaml -f helm/voting-app/values-bad.yaml
+#   helm rollback voting-app 1
+
+vote:
+  image:
+    tag: "nonexistent-tag-999"
+
+result:
+  image:
+    tag: "nonexistent-tag-999"
+
+worker:
+  image:
+    tag: "nonexistent-tag-999"
