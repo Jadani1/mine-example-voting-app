@@ -13,20 +13,19 @@ RUN npm install -g nodemon
 COPY package*.json ./
 
 RUN npm ci && \
- npm cache clean --force && \
- mv /usr/local/app/node_modules /node_modules
+    npm cache clean --force && \
+    mv /usr/local/app/node_modules /node_modules
 
 COPY . .
-# 1. Create a non-root system user and group for Alpine
-RUN addgroup -g 1001 appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
 
-# 2. Change ownership of the application directory to the non-root user
-RUN chown -R appuser:appuser /usr/src/app
+# Create a non-root system user and group (Debian/slim syntax)
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -r -g appgroup -s /sbin/nologin appuser
 
-# 3. Switch from root to the non-root user
+# Own app files and the moved node_modules tree
+RUN chown -R appuser:appgroup /usr/local/app /node_modules
+
 USER appuser
-
 
 ENV PORT=80
 EXPOSE 80
