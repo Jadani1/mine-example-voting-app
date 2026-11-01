@@ -1,0 +1,4 @@
+cluster_name      = "voting-app"
+node_image        = "kindest/node:v1.31.2"
+vote_host_port    = 8080
+result_host_port  = 8081

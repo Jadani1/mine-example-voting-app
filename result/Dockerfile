@@ -18,8 +18,18 @@ RUN npm ci && \
 
 COPY . .
 
-ENV PORT=80
-EXPOSE 80
+# 1. Create a non-root system user and group (Debian/slim uses groupadd/useradd)
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# 2. Change ownership of app dirs to the non-root user
+RUN chown -R appuser:appuser /usr/local/app /node_modules
+
+# 3. Switch from root to the non-root user
+USER appuser
+
+# Non-root cannot bind privileged ports (<1024); use 8080 inside the container
+ENV PORT=8080
+EXPOSE 8080
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "server.js"]

@@ -1,4 +1,4 @@
-# base defines a base stage that uses the official python runtime base image
+# base defines a base stage that uses the official python runtime base image (already pinned to version 3.11-slim)
 FROM python:3.11-slim AS base
 
 # Add curl for healthcheck
@@ -22,8 +22,17 @@ CMD ["python", "app.py"]
 # final defines the stage that will bundle the application for production
 FROM base AS final
 
-# Copy our code from the current folder to the working directory inside the container
+# 1. Create a non-root system user and group
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# 2. Copy our code from the current folder to the working directory
 COPY . .
+
+# 3. Change ownership of the application folder to the non-root user
+RUN chown -R appuser:appuser /usr/local/app
+
+# 4. Switch from root to the non-root user
+USER appuser
 
 # Make port 80 available for links and/or publish
 EXPOSE 80

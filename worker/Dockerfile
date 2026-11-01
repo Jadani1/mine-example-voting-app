@@ -24,5 +24,15 @@ RUN dotnet publish -c release -o /app -a $TARGETARCH --self-contained false --no
 # app image
 FROM mcr.microsoft.com/dotnet/runtime:7.0
 WORKDIR /app
-COPY --from=build /app .
+
+# 1. Create a non-root system user and group
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# 2. Copy the built app files and assign ownership to appuser
+COPY --chown=appuser:appuser --from=build /app .
+
+# 3. Switch from root to the non-root user
+USER appuser
+
 ENTRYPOINT ["dotnet", "Worker.dll"]
+
